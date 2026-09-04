@@ -98,15 +98,11 @@ export default function ProductLeadForm() {
     setErrors((prev) => ({ ...prev, [field]: vErrors[field] }));
   };
 
-  // Select service and open related website
+  // Select service
   const handleProductSelect = (product) => {
     setFormData((prev) => ({ ...prev, product: product.id }));
     setTouched((prev) => ({ ...prev, product: true }));
     setErrors((prev) => ({ ...prev, product: undefined }));
-
-    if (product.url) {
-      window.open(product.url, '_blank', 'noopener,noreferrer');
-    }
   };
 
   // Find currently selected service and its custom_lead_product code
@@ -269,13 +265,19 @@ export default function ProductLeadForm() {
   const renderServiceCard = (item) => {
     const isSelected = formData.product === item.id;
     return (
-      <button
+      <div
         key={item.id}
-        type="button"
-        disabled={isSubmitting}
-        onClick={() => handleProductSelect(item)}
-        title={`Visit ${item.name} (${item.displayUrl})`}
-        className={`relative flex flex-col items-center justify-between p-2 sm:p-2.5 min-h-[82px] sm:min-h-[90px] rounded-2xl border transition-all text-center select-none group
+        role="button"
+        tabIndex={0}
+        onClick={() => !isSubmitting && handleProductSelect(item)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            !isSubmitting && handleProductSelect(item);
+          }
+        }}
+        title={`Select ${item.name}`}
+        className={`relative flex flex-col items-center justify-between p-2 sm:p-2.5 min-h-[92px] sm:min-h-[98px] rounded-2xl border transition-all text-center select-none group
           ${isSelected 
             ? 'bg-indigo-50/90 border-indigo-600 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-600/30' 
             : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-indigo-300 hover:shadow-sm'}
@@ -283,13 +285,9 @@ export default function ProductLeadForm() {
         `}
       >
         {/* Selected checkmark */}
-        {isSelected ? (
-          <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-sm">
+        {isSelected && (
+          <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-sm z-10">
             <Check className="w-2.5 h-2.5 stroke-[3]" />
-          </span>
-        ) : (
-          <span className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 group-hover:text-indigo-600">
-            <ExternalLink className="w-3 h-3" />
           </span>
         )}
 
@@ -302,16 +300,30 @@ export default function ProductLeadForm() {
           />
         </div>
 
-        {/* Service Name & Clickable URL */}
-        <div className="w-full mt-1">
+        {/* Service Name & View Website Link */}
+        <div className="w-full mt-1 flex flex-col items-center">
           <span className={`block text-[11px] sm:text-xs font-bold leading-tight truncate w-full ${isSelected ? 'text-indigo-950' : 'text-slate-800'}`}>
             {item.name}
           </span>
-          <span className="block text-[9px] sm:text-[10px] text-indigo-600 group-hover:underline leading-none mt-0.5 truncate w-full font-medium">
-            {item.displayUrl}
-          </span>
+          {item.url ? (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              title={`Visit ${item.name} (${item.displayUrl})`}
+              className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-indigo-600 hover:text-indigo-800 hover:underline font-semibold mt-0.5 py-0.5 px-1.5 rounded hover:bg-indigo-100/60 transition-colors z-20"
+            >
+              <span>View Website</span>
+              <ExternalLink className="w-2.5 h-2.5 flex-shrink-0" />
+            </a>
+          ) : (
+            <span className="block text-[9px] sm:text-[10px] text-slate-400 mt-0.5">
+              {item.displayUrl}
+            </span>
+          )}
         </div>
-      </button>
+      </div>
     );
   };
 
