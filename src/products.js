@@ -1,4 +1,4 @@
-import kenzAiHubLogo from './assets/kenzaihub.webp';
+import kenzAiHubLogo from './assets/kenzaihub-logo-latest.webp';
 import aiBizzLogo from './assets/aibizz (2).webp';
 import kenMeetLogo from './assets/kenmeet.webp';
 import kenzIntentLogo from './assets/kenz-intent.webp';
@@ -6,6 +6,7 @@ import kenVoiceLogo from './assets/kenvoice-logo.webp';
 import recruifyLogo from './assets/recrufy.webp';
 import smartIdpLogo from './assets/smartidp.webp';
 import leapLogo from './assets/logo-leap5.png';
+
 
 
 export { leapLogo, kenzAiHubLogo, smartIdpLogo };
