@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import { 
-  User, 
-  Mail, 
-  Building2, 
-  Send, 
-  Check, 
-  CheckCircle2, 
-  RotateCcw, 
-  ShieldCheck, 
-  Loader2, 
-  XCircle, 
-  X, 
+import React, { useState } from "react";
+import axios from "axios";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import {
+  User,
+  Mail,
+  Building2,
+  Send,
+  Check,
+  CheckCircle2,
+  RotateCcw,
+  ShieldCheck,
+  Loader2,
+  XCircle,
+  X,
   ArrowRight,
-  ExternalLink
-} from 'lucide-react';
-import { DEFAULT_PRODUCTS, PRODUCT_ID_MAP, leapLogo } from '../products';
+  ExternalLink,
+} from "lucide-react";
+import { DEFAULT_PRODUCTS, PRODUCT_ID_MAP, leapLogo } from "../products";
 
 const PhoneInputComponent = PhoneInput.default || PhoneInput;
 
+console.log("Loaded Products:", DEFAULT_PRODUCTS);
+
 const INITIAL_FORM = {
-  name: '',
-  email: '',
-  phone: '966',
-  company: '',
-  product: 'kenz-ai-hub',
-  description: '',
+  name: "",
+  email: "",
+  phone: "966",
+  company: "",
+  product: "kenz-ai-hub",
+  description: "",
 };
 
 export default function ProductLeadForm() {
@@ -41,31 +43,31 @@ export default function ProductLeadForm() {
   const validate = (values) => {
     const errs = {};
     if (!values.name.trim()) {
-      errs.name = 'Full name is required';
+      errs.name = "Full name is required";
     } else if (values.name.trim().length < 2) {
-      errs.name = 'Name must be at least 2 characters';
+      errs.name = "Name must be at least 2 characters";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!values.email.trim()) {
-      errs.email = 'Business email is required';
+      errs.email = "Business email is required";
     } else if (!emailRegex.test(values.email.trim())) {
-      errs.email = 'Enter a valid business email';
+      errs.email = "Enter a valid business email";
     }
 
-    const phoneDigits = (values.phone || '').replace(/[^0-9]/g, '');
-    if (!phoneDigits || phoneDigits === '966') {
-      errs.phone = 'Phone number is required';
+    const phoneDigits = (values.phone || "").replace(/[^0-9]/g, "");
+    if (!phoneDigits || phoneDigits === "966") {
+      errs.phone = "Phone number is required";
     } else if (phoneDigits.length < 8 || phoneDigits.length > 16) {
-      errs.phone = 'Enter a valid phone number';
+      errs.phone = "Enter a valid phone number";
     }
 
     if (!values.company.trim()) {
-      errs.company = 'Company name is required';
+      errs.company = "Company name is required";
     }
 
     if (!values.product) {
-      errs.product = 'Please select a service';
+      errs.product = "Please select a service";
     }
 
     return errs;
@@ -106,8 +108,11 @@ export default function ProductLeadForm() {
   };
 
   // Find currently selected service and its custom_lead_product code
-  const selectedService = DEFAULT_PRODUCTS.find((s) => s.id === formData.product) || DEFAULT_PRODUCTS[0];
-  const activeProductId = PRODUCT_ID_MAP[formData.product] || selectedService?.productId;
+  const selectedService =
+    DEFAULT_PRODUCTS.find((s) => s.id === formData.product) ||
+    DEFAULT_PRODUCTS[0];
+  const activeProductId =
+    PRODUCT_ID_MAP[formData.product] || selectedService?.productId;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,15 +139,18 @@ export default function ProductLeadForm() {
 
     // Split Name into first_name and last_name for ERP payload
     const nameParts = formData.name.trim().split(/\s+/);
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
 
     // Format phone with leading +
-    const rawDigits = (formData.phone || '').replace(/[^0-9]/g, '');
-    const formattedPhone = rawDigits.startsWith('+') ? rawDigits : `+${rawDigits}`;
+    const rawDigits = (formData.phone || "").replace(/[^0-9]/g, "");
+    const formattedPhone = rawDigits.startsWith("+")
+      ? rawDigits
+      : `+${rawDigits}`;
 
     // Dynamically resolve custom_lead_product based on the selected product
-    const customLeadProduct = PRODUCT_ID_MAP[formData.product] || selectedService?.productId;
+    const customLeadProduct =
+      PRODUCT_ID_MAP[formData.product] || selectedService?.productId;
 
     // 1. Construct ERP Lead payload
     const erpPayload = {
@@ -150,10 +158,12 @@ export default function ProductLeadForm() {
       last_name: lastName || firstName,
       email_id: formData.email.trim(),
       mobile_no: formattedPhone,
-      source: 'Website',
-      request_type: 'Product Enquiry',
-      description: formData.description.trim() || `Inquiry for ${selectedService?.name || 'Kenz AI Hub'}`,
-      company: 'kenz ai hub',
+      source: "Website",
+      request_type: "Product Enquiry",
+      description:
+        formData.description.trim() ||
+        `Inquiry for ${selectedService?.name || "Kenz AI Hub"}`,
+      company: "kenz ai hub",
       custom_lead_product: customLeadProduct,
       company_name: formData.company.trim(),
       product_id: selectedService?.product_id,
@@ -164,28 +174,118 @@ export default function ProductLeadForm() {
       full_name: formData.name.trim(),
       email: formData.email.trim(),
       phone_number: formattedPhone,
-      subject: `${selectedService?.name || 'Product'} Inquiry`,
-      description: formData.description.trim() || 'Inquiry submitted via website form',
+      subject: `${selectedService?.name || "Product"} Inquiry`,
+      description:
+        formData.description.trim() || "Inquiry submitted via website form",
       product_ids: String(selectedService?.product_id || 31),
     };
+    // const kenaaihubproducts = {
+    //   kenVoice: 1,
+    //   kenmeet: 2,
+    //   "kenz-ai-hub": 3,
+    //   "kenz-intent": 4,
+    //   "recruify-ai": 5,
+    //   "smart-idp": 6,
+    //   "ai-bizz-hub": 9,
+    // };
+    const kenaaihubproducts = {
+      "kenz-ai-hub": 3,
+      "ai-bizz-hub": 9,
+      kenmeet: 2,
+      "kenz-intent": 4,
+      "recruify-ai": 5,
+      "smart-idp": 6,
+      kenvoice: 1,
+    };
+    const productNames = {
+      "kenz-ai-hub": "Kenzaihub",
+      "ai-bizz-hub": "Aibizzhub",
+      kenmeet: "Kenmeet",
+      "kenz-intent": "KENZINTENT",
+      "recruify-ai": "Recruify ai",
+      "smart-idp": "SMART IDP",
+      kenvoice: "KenVoice",
+    };
+    // const agentuid = {
+    //   "kenz-ai-hub": "56acc26f712c0b59",
+    //   "ai-bizz-hub": "bcb05ab91e2eb647",
+    //   kenmeet: "32f86dc8db4e3333",
+    //   "kenz-intent": "bec39a518e58b101",
+    //   "recruify-ai": "ded1f9789755b278",
+    //   "smart-idp": "f3fbc59ff399b24f",
+    //   kenVoice: "7216a9b2eb71f4d3",
+    // };
+    const agentuid = {
+      "kenz-ai-hub": "56acc26f712c0b59",
+      "ai-bizz-hub": "bcb05ab91e2eb647",
+      kenmeet: "32f86dc8db4e3333",
+      "kenz-intent": "bec39a518e58b101",
+      "recruify-ai": "ded1f9789755b278",
+      "smart-idp": "f3fbc59ff399b24f",
+      kenvoice: "7216a9b2eb71f4d3",
+    };
+    const selectedProductKey = selectedService?.id || "kenz-ai-hub";
 
-    console.log('Submitting ERP Lead Payload:', erpPayload);
-    console.log('Submitting CXPro Lead Payload:', cxproPayload);
+    const leadProduct = kenaaihubproducts[selectedProductKey] || 3;
 
+    const productName = productNames[selectedProductKey] || "Kenzaihub";
+
+    const selectedAgentUid =
+      agentuid[selectedProductKey] || agentuid["kenz-ai-hub"];
+    console.log("Selected Service:", selectedService);
+    const calldatatosend = {
+      phone: formattedPhone,
+      type: "0",
+      email: formData.email.trim(),
+      language: "en-US",
+      context: `You are calling name:${formData.name.trim()} email:${formData.email.trim()} phone:${formattedPhone} company:${formData.company.trim()} product:${selectedService?.name || "Product"} description:${formData.description.trim() || "Inquiry submitted via website form"}`,
+    };
+    const CallAPIS = `https://agent.kenvoice.ai/${selectedAgentUid}/outbound-call`;
+    const CallAPIHeaders = import.meta.env.VITE_TOKEN_KENVOICE;
+    const kenzaihubPayload = {
+      leads_name: formData.name.trim(),
+      leads_email: formData.email.trim(),
+      lead_phone: formattedPhone,
+      lead_product: leadProduct,
+      lead_user_company: formData.company.trim(),
+      lead_company_address: "Saudi",
+      inquire_type: "General enquiry",
+      lead_status: "In-Progress",
+      lead_source: "Website",
+      lead_company: "Kenzaihub",
+      product_name: productName,
+    };
+
+    console.log("Submitting ERP Lead Payload:", erpPayload);
+    console.log("Submitting CXPro Lead Payload:", cxproPayload);
+    console.log("Submitting KenzAIHub Lead Payload:", kenzaihubPayload);
     // Direct API targets (moved directly into component, no proxy needed)
-    const ERP_API_URL = import.meta.env.VITE_API_URL || 'https://testerp.aibizzapp.com/api/resource/Lead';
-    const ERP_TOKEN = import.meta.env.VITE_API_TOKEN || 'token a5c69b373b08a5f:b12c52520efe83a';
+    const ERP_API_URL =
+      import.meta.env.VITE_API_URL ||
+      "https://testerp.aibizzapp.com/api/resource/Lead";
+    const ERP_TOKEN =
+      import.meta.env.VITE_API_TOKEN || "token a5c69b373b08a5f:b12c52520efe83a";
 
-    const CXPRO_API_URL = import.meta.env.VITE_CXPRO_API_URL || 'https://api.riskfortis.com/v1/all-leads';
-    const CXPRO_TOKEN = import.meta.env.VITE_CXPRO_API_TOKEN || 'Bearer ak_live_7bE3xN9fQ4wM2zVpK1sC8jD5hG6tY0uR';
+    const CXPRO_API_URL =
+      import.meta.env.VITE_CXPRO_API_URL ||
+      "https://api.riskfortis.com/v1/all-leads";
+    const CXPRO_TOKEN =
+      import.meta.env.VITE_CXPRO_API_TOKEN ||
+      "Bearer ak_live_7bE3xN9fQ4wM2zVpK1sC8jD5hG6tY0uR";
+    const KENZAIHUB_API_URL =
+      import.meta.env.VITE_KENZAIHUB_API_URL ||
+      "https://apis.kenzaihub.io/v1/leads/add-lead";
+    const KENZAIHUB_TOKEN =
+      import.meta.env.VITE_LEADS_API_TOKEN ||
+      "Bearer ak_live_7bE3xN9fQ4wM2zVpK1sC8jD5hG6tY0uR";
 
     try {
       // 1. Submit directly to ERP Leads API (https://testerp.aibizzapp.com)
       const erpRequest = async () => {
         return await axios.post(ERP_API_URL, erpPayload, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': ERP_TOKEN,
+            "Content-Type": "application/json",
+            Authorization: ERP_TOKEN,
           },
           timeout: 10000,
         });
@@ -195,38 +295,88 @@ export default function ProductLeadForm() {
       const cxproRequest = async () => {
         return await axios.post(CXPRO_API_URL, cxproPayload, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': CXPRO_TOKEN,
+            "Content-Type": "application/json",
+            Authorization: CXPRO_TOKEN,
           },
           timeout: 10000,
         });
       };
 
-      const [erpResult, cxproResult] = await Promise.allSettled([erpRequest(), cxproRequest()]);
+      // 3. Submit directly to KenzAIHub Leads API (https://apis.kenzaihub.io)
+      const kenzaihubRequest = async () => {
+        return await axios.post(KENZAIHUB_API_URL, kenzaihubPayload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: KENZAIHUB_TOKEN,
+          },
+          timeout: 10000,
+        });
+      };
+      const callRequest = async () => {
+        return await axios.post(CallAPIS, calldatatosend, {
+          headers: {
+            "Content-Type": "application/json",
+            Authentication: CallAPIHeaders,
+          },
+          timeout: 10000,
+        });
+      };
+      // const [erpResult, cxproResult, kenzaihubResult] =
+      //   await Promise.allSettled([
+      //     erpRequest(),
+      //     cxproRequest(),
+      //     kenzaihubRequest(),
+      //     callRequest(),
+      //   ]);
+      const [erpResult, cxproResult, kenzaihubResult, callResult] =
+        await Promise.allSettled([
+          erpRequest(),
+          cxproRequest(),
+          kenzaihubRequest(),
+          callRequest(),
+        ]);
 
-      console.log('ERP API Result:', erpResult);
-      console.log('CXPro API Result:', cxproResult);
+      console.log("ERP API Result:", erpResult);
+      console.log("CXPro API Result:", cxproResult);
+      console.log("KenzAIHub API Result:", kenzaihubResult);
+      console.log("Call API Result:", callResult);
 
-      const erpSuccess = erpResult.status === 'fulfilled';
-      const cxproSuccess = cxproResult.status === 'fulfilled';
-
-      if (!erpSuccess && !cxproSuccess) {
-        const errObj = erpResult.reason || cxproResult.reason;
-        const errMsg = errObj?.response?.data?.message || 
-                       errObj?.response?.data?._server_messages || 
-                       errObj?.message || 
-                       'Failed to submit inquiry to server. Please try again.';
-        throw new Error(typeof errMsg === 'string' ? errMsg : 'Failed to submit inquiry.');
+      const erpSuccess = erpResult.status === "fulfilled";
+      const cxproSuccess = cxproResult.status === "fulfilled";
+      const kenzaihubSuccess = kenzaihubResult.status === "fulfilled";
+      const callSuccess = callResult.status === "fulfilled";
+      if (!erpSuccess && !cxproSuccess && !kenzaihubSuccess && !callSuccess) {
+        const errObj =
+          erpResult.reason ||
+          cxproResult.reason ||
+          kenzaihubResult.reason ||
+          callResult.reason;
+        const errMsg =
+          errObj?.response?.data?.message ||
+          errObj?.response?.data?._server_messages ||
+          errObj?.message ||
+          "Failed to submit inquiry to server. Please try again.";
+        throw new Error(
+          typeof errMsg === "string" ? errMsg : "Failed to submit inquiry.",
+        );
       }
 
       const createdLead = erpSuccess ? erpResult.value?.data?.data : null;
       const cxproData = cxproSuccess ? cxproResult.value?.data?.data : null;
-
+      const kenzaihubData = kenzaihubSuccess
+        ? kenzaihubResult.value?.data?.data
+        : null;
+      const callData = callSuccess ? callResult.value?.data?.data : null;
       setSubmitResult({
         success: true,
-        message: 'Thank you! Your inquiry has been submitted successfully to both systems. Our team will contact you within 2 business hours.',
+        message:
+          "Thank you! Your inquiry has been submitted successfully to both systems. Our team will contact you within 2 business hours.",
         data: {
-          id: createdLead?.name || (cxproData?.id ? `CX-${cxproData.id}` : `LEAD-${Date.now().toString().slice(-6)}`),
+          id:
+            createdLead?.name ||
+            (cxproData?.id
+              ? `CX-${cxproData.id}`
+              : `LEAD-${Date.now().toString().slice(-6)}`),
           ...formData,
           phone: formattedPhone,
           serviceName: selectedService?.name,
@@ -234,18 +384,24 @@ export default function ProductLeadForm() {
           product_id: selectedService?.product_id,
           erpSynced: erpSuccess,
           cxproSynced: cxproSuccess,
+          kenzaihubSynced: kenzaihubSuccess,
+          callInitiated: callSuccess,
         },
       });
     } catch (err) {
-      console.error('Lead Submission Error:', err);
-      const errMsg = err.response?.data?.message || 
-                     err.response?.data?._server_messages || 
-                     err.message || 
-                     'Failed to submit inquiry to server. Please try again.';
+      console.error("Lead Submission Error:", err);
+      const errMsg =
+        err.response?.data?.message ||
+        err.response?.data?._server_messages ||
+        err.message ||
+        "Failed to submit inquiry to server. Please try again.";
 
       setSubmitResult({
         success: false,
-        message: typeof errMsg === 'string' ? errMsg : 'Failed to submit inquiry. Please verify your details.',
+        message:
+          typeof errMsg === "string"
+            ? errMsg
+            : "Failed to submit inquiry. Please verify your details.",
       });
     } finally {
       setIsSubmitting(false);
@@ -271,17 +427,19 @@ export default function ProductLeadForm() {
         tabIndex={0}
         onClick={() => !isSubmitting && handleProductSelect(item)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             !isSubmitting && handleProductSelect(item);
           }
         }}
         title={`Select ${item.name}`}
         className={`relative flex flex-col items-center justify-between p-2 sm:p-2.5 min-h-[92px] sm:min-h-[98px] rounded-2xl border transition-all text-center select-none group
-          ${isSelected 
-            ? 'bg-indigo-50/90 border-indigo-600 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-600/30' 
-            : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-indigo-300 hover:shadow-sm'}
-          ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'}
+          ${
+            isSelected
+              ? "bg-indigo-50/90 border-indigo-600 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-600/30"
+              : "bg-slate-50/70 border-slate-200 hover:bg-white hover:border-indigo-300 hover:shadow-sm"
+          }
+          ${isSubmitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer active:scale-95"}
         `}
       >
         {/* Selected checkmark */}
@@ -293,16 +451,18 @@ export default function ProductLeadForm() {
 
         {/* Logo Image */}
         <div className="w-full h-8 sm:h-9 flex items-center justify-center px-1">
-          <img 
-            src={item.logo} 
-            alt={item.name} 
-            className="max-h-7 sm:max-h-8 max-w-full object-contain transition-transform group-hover:scale-105" 
+          <img
+            src={item.logo}
+            alt={item.name}
+            className="max-h-7 sm:max-h-8 max-w-full object-contain transition-transform group-hover:scale-105"
           />
         </div>
 
         {/* Service Name & View Website Link */}
         <div className="w-full mt-1 flex flex-col items-center">
-          <span className={`block text-[11px] sm:text-xs font-bold leading-tight truncate w-full ${isSelected ? 'text-indigo-950' : 'text-slate-800'}`}>
+          <span
+            className={`block text-[11px] sm:text-xs font-bold leading-tight truncate w-full ${isSelected ? "text-indigo-950" : "text-slate-800"}`}
+          >
             {item.name}
           </span>
           {item.url ? (
@@ -329,17 +489,15 @@ export default function ProductLeadForm() {
 
   return (
     <div className="w-full max-w-xl md:max-w-2xl lg:max-w-[760px] mx-auto rounded-3xl bg-white border border-slate-200/90 shadow-[0_25px_60px_rgba(30,41,59,0.09)] p-6 sm:p-9 relative overflow-hidden text-slate-800">
-
-
       {/* 1. TOP LOGO & BRAND HEADER */}
       <div className="flex flex-col items-center text-center mt-1 mb-6">
         {leapLogo && (
           <div className="flex items-center justify-center mb-3">
             <div className="px-4 py-2.5 bg-[#0a0b16] rounded-2xl shadow-md shadow-indigo-500/10 flex items-center justify-center border border-slate-800">
-              <img 
-                src={leapLogo} 
-                alt="LEAP 5" 
-                className="h-12 sm:h-14 w-auto object-contain" 
+              <img
+                src={leapLogo}
+                alt="LEAP 5"
+                className="h-12 sm:h-14 w-auto object-contain"
               />
             </div>
           </div>
@@ -373,34 +531,50 @@ export default function ProductLeadForm() {
             <CheckCircle2 className="w-9 h-9" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Inquiry Confirmed!</h2>
-            <p className="text-sm text-slate-600 mt-1">{submitResult.message}</p>
+            <h2 className="text-xl font-bold text-slate-900">
+              Inquiry Confirmed!
+            </h2>
+            <p className="text-sm text-slate-600 mt-1">
+              {submitResult.message}
+            </p>
           </div>
 
           <div className="bg-white p-5 rounded-2xl text-left text-xs sm:text-sm space-y-2.5 border border-slate-200 shadow-sm text-slate-700 font-sans max-w-lg mx-auto">
             <div className="flex justify-between border-b border-slate-100 pb-2">
               <span className="text-slate-400">Reference:</span>
-              <span className="font-mono text-indigo-600 font-bold">{submitResult.data.id}</span>
+              <span className="font-mono text-indigo-600 font-bold">
+                {submitResult.data.id}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Contact:</span>
-              <span className="text-slate-900 font-semibold">{submitResult.data.name}</span>
+              <span className="text-slate-900 font-semibold">
+                {submitResult.data.name}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Email:</span>
-              <span className="text-slate-900 font-medium">{submitResult.data.email}</span>
+              <span className="text-slate-900 font-medium">
+                {submitResult.data.email}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Phone:</span>
-              <span className="text-slate-900 font-medium">{submitResult.data.phone}</span>
+              <span className="text-slate-900 font-medium">
+                {submitResult.data.phone}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Company:</span>
-              <span className="text-slate-900">{submitResult.data.company}</span>
+              <span className="text-slate-900">
+                {submitResult.data.company}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Product / Service:</span>
-              <span className="text-indigo-600 font-bold">{submitResult.data.serviceName}</span>
+              <span className="text-indigo-600 font-bold">
+                {submitResult.data.serviceName}
+              </span>
             </div>
             <div className="flex justify-between border-t border-slate-100 pt-2">
               <span className="text-slate-400">Product ID:</span>
@@ -411,11 +585,15 @@ export default function ProductLeadForm() {
             <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-50">
               <span className="text-slate-400">Synced Systems:</span>
               <div className="flex items-center gap-2">
-                <span className={`inline-flex items-center gap-1 font-semibold ${submitResult.data.erpSynced ? 'text-emerald-600' : 'text-slate-400'}`}>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold ${submitResult.data.erpSynced ? "text-emerald-600" : "text-slate-400"}`}
+                >
                   <Check className="w-3 h-3 stroke-[3]" /> ERP Leads
                 </span>
                 <span className="text-slate-300">•</span>
-                <span className={`inline-flex items-center gap-1 font-semibold ${submitResult.data.cxproSynced ? 'text-emerald-600' : 'text-slate-400'}`}>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold ${submitResult.data.cxproSynced ? "text-emerald-600" : "text-slate-400"}`}
+                >
                   <Check className="w-3 h-3 stroke-[3]" /> CXPro Leads
                 </span>
               </div>
@@ -456,7 +634,9 @@ export default function ProductLeadForm() {
             </div>
 
             {touched.product && errors.product && (
-              <p className="text-xs text-rose-500 font-medium mt-1">{errors.product}</p>
+              <p className="text-xs text-rose-500 font-medium mt-1">
+                {errors.product}
+              </p>
             )}
           </div>
 
@@ -476,17 +656,21 @@ export default function ProductLeadForm() {
                   placeholder="Your full name"
                   value={formData.name}
                   onChange={handleChange}
-                  onBlur={() => handleBlur('name')}
+                  onBlur={() => handleBlur("name")}
                   disabled={isSubmitting}
                   className={`w-full rounded-xl bg-slate-50 border text-slate-900 placeholder-slate-400 text-xs sm:text-sm py-2.5 sm:py-3 pl-10 pr-3 outline-none transition-all
-                    ${errors.name && touched.name 
-                      ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20' 
-                      : 'border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100'}
+                    ${
+                      errors.name && touched.name
+                        ? "border-rose-400 focus:border-rose-500 bg-rose-50/20"
+                        : "border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                    }
                   `}
                 />
               </div>
               {touched.name && errors.name && (
-                <p className="text-[11px] text-rose-500 font-medium">{errors.name}</p>
+                <p className="text-[11px] text-rose-500 font-medium">
+                  {errors.name}
+                </p>
               )}
             </div>
 
@@ -504,17 +688,21 @@ export default function ProductLeadForm() {
                   placeholder="name@company.com"
                   value={formData.email}
                   onChange={handleChange}
-                  onBlur={() => handleBlur('email')}
+                  onBlur={() => handleBlur("email")}
                   disabled={isSubmitting}
                   className={`w-full rounded-xl bg-slate-50 border text-slate-900 placeholder-slate-400 text-xs sm:text-sm py-2.5 sm:py-3 pl-10 pr-3 outline-none transition-all
-                    ${errors.email && touched.email 
-                      ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20' 
-                      : 'border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100'}
+                    ${
+                      errors.email && touched.email
+                        ? "border-rose-400 focus:border-rose-500 bg-rose-50/20"
+                        : "border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                    }
                   `}
                 />
               </div>
               {touched.email && errors.email && (
-                <p className="text-[11px] text-rose-500 font-medium">{errors.email}</p>
+                <p className="text-[11px] text-rose-500 font-medium">
+                  {errors.email}
+                </p>
               )}
             </div>
 
@@ -526,24 +714,36 @@ export default function ProductLeadForm() {
               </label>
               <div className="relative">
                 <PhoneInputComponent
-                  country={'sa'}
-                  preferredCountries={['sa', 'ae', 'qa', 'kw', 'om', 'gb', 'us']}
+                  country={"sa"}
+                  preferredCountries={[
+                    "sa",
+                    "ae",
+                    "qa",
+                    "kw",
+                    "om",
+                    "gb",
+                    "us",
+                  ]}
                   value={formData.phone}
                   onChange={handlePhoneChange}
-                  onBlur={() => handleBlur('phone')}
+                  onBlur={() => handleBlur("phone")}
                   disabled={isSubmitting}
                   enableSearch={true}
                   searchPlaceholder="Search country..."
                   containerClass="!w-full"
                   inputClass={`!w-full !h-[42px] !text-xs sm:!text-sm !rounded-xl !bg-slate-50 !text-slate-900 ${
-                    errors.phone && touched.phone ? '!border-rose-400 !bg-rose-50/20' : '!border-slate-200 focus:!border-indigo-600 focus:!bg-white'
+                    errors.phone && touched.phone
+                      ? "!border-rose-400 !bg-rose-50/20"
+                      : "!border-slate-200 focus:!border-indigo-600 focus:!bg-white"
                   }`}
                   buttonClass="!border-none !bg-transparent !rounded-l-xl"
                   dropdownClass="!rounded-xl !shadow-2xl !border-slate-200 text-slate-800"
                 />
               </div>
               {touched.phone && errors.phone && (
-                <p className="text-[11px] text-rose-500 font-medium">{errors.phone}</p>
+                <p className="text-[11px] text-rose-500 font-medium">
+                  {errors.phone}
+                </p>
               )}
             </div>
 
@@ -561,17 +761,21 @@ export default function ProductLeadForm() {
                   placeholder="Your company or organization"
                   value={formData.company}
                   onChange={handleChange}
-                  onBlur={() => handleBlur('company')}
+                  onBlur={() => handleBlur("company")}
                   disabled={isSubmitting}
                   className={`w-full rounded-xl bg-slate-50 border text-slate-900 placeholder-slate-400 text-xs sm:text-sm py-2.5 sm:py-3 pl-10 pr-3 outline-none transition-all
-                    ${errors.company && touched.company 
-                      ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20' 
-                      : 'border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100'}
+                    ${
+                      errors.company && touched.company
+                        ? "border-rose-400 focus:border-rose-500 bg-rose-50/20"
+                        : "border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                    }
                   `}
                 />
               </div>
               {touched.company && errors.company && (
-                <p className="text-[11px] text-rose-500 font-medium">{errors.company}</p>
+                <p className="text-[11px] text-rose-500 font-medium">
+                  {errors.company}
+                </p>
               )}
             </div>
 
