@@ -334,7 +334,7 @@ export default function ProductLeadForm() {
         )}
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Product Lead Form
+          KenzAiHub | LEAP Offer - 50% OFF
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
           Select our service & get your special onboarding pass
