@@ -1,0 +1,79 @@
+@import 'react-phone-input-2/lib/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-gradient-to-br from-slate-50 via-indigo-50/40 to-sky-50 text-slate-900 min-h-screen overflow-x-hidden antialiased;
+  }
+}
+
+/* Crisp white card with soft ambient glow */
+.card-shadow {
+  box-shadow: 0 20px 50px -12px rgba(99, 102, 241, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.8);
+}
+
+/* React Phone Input 2 custom styling to match input aesthetics */
+.react-tel-input .form-control {
+  width: 100% !important;
+  height: 38px !important;
+  font-size: 12px !important;
+  background-color: rgb(248, 250, 252) !important;
+  border: 1px solid rgb(226, 232, 240) !important;
+  border-radius: 0.75rem !important;
+  color: rgb(15, 23, 42) !important;
+  padding-left: 52px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.react-tel-input .form-control:focus {
+  border-color: rgb(79, 70, 229) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15) !important;
+}
+
+.react-tel-input .flag-dropdown {
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0.75rem 0 0 0.75rem !important;
+  padding-left: 4px !important;
+}
+
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+  border-radius: 0.75rem 0 0 0.75rem !important;
+}
+
+.react-tel-input .selected-flag {
+  border-radius: 0.75rem 0 0 0.75rem !important;
+  padding: 0 0 0 8px !important;
+}
+
+.react-tel-input .selected-flag:hover,
+.react-tel-input .selected-flag:focus {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.react-tel-input .country-list {
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgb(226, 232, 240) !important;
+  font-size: 12px !important;
+  z-index: 60 !important;
+  margin-top: 4px !important;
+}
+
+.react-tel-input .country-list .search {
+  padding: 8px !important;
+  background-color: #f8fafc !important;
+}
+
+.react-tel-input .country-list .search-box {
+  width: 95% !important;
+  padding: 6px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid #e2e8f0 !important;
+  font-size: 12px !important;
+}
